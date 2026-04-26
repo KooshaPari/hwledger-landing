@@ -1,5 +1,9 @@
 # hwledger-landing
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/KooshaPari/hwledger-landing/ci.yml?branch=main)](https://github.com/KooshaPari/hwledger-landing/actions)
+[![TypeScript](https://img.shields.io/badge/typescript-5%2B-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+
 Production landing page at `hwledger.kooshapari.com` for [KooshaPari/hwLedger](https://github.com/KooshaPari/hwLedger), a Rust-based project management and workflow orchestration platform. Part of the Phenotype org-pages architecture (Tier 2; Tier 1 is `projects.kooshapari.com`).
 
 ## Purpose
