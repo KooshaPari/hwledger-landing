@@ -1,5 +1,6 @@
 ---
 import "../../styles/globals.css";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /docs/* — renders source repo's docs/ tree.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
@@ -114,8 +115,8 @@ if (Array.isArray(listing)) {
     .map((e) => {
       const href =
         e.type === "dir"
-          ? `/docs/${e.path.replace(/^docs\//, "")}`
-          : `/docs/${e.path.replace(/^docs\//, "").replace(/\.mdx?$/, "")}`;
+          ? sitePath(`/docs/${e.path.replace(/^docs\//, "")}`)
+          : sitePath(`/docs/${e.path.replace(/^docs\//, "").replace(/\.mdx?$/, "")}`);
       return `<li><a class="doc-link" href="${href}">${e.name}</a></li>`;
     })
     .join("\n");
@@ -160,9 +161,9 @@ if (Array.isArray(listing)) {
   <body class="min-h-screen">
     <main class="max-w-4xl mx-auto px-6 py-12">
       <nav class="mono text-xs text-[var(--muted)] mb-6">
-        <a href="/" class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
+        <a href={sitePath("/")} class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
         <span class="mx-1">/</span>
-        <a href="/docs" class="hover:text-[var(--accent)]">docs</a>
+        <a href={sitePath("/docs")} class="hover:text-[var(--accent)]">docs</a>
         {slug && (
           <>
             <span class="mx-1">/</span>

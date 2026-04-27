@@ -14,7 +14,7 @@ Provide a cohesive entry point to Hwledger documentation, dashboards, and QA rep
 
 - **Frontend:** Astro 6 (static HTML at build time)
 - **Styling:** Tailwind CSS 4 with impeccable design baseline
-- **Deployment:** Vercel (serverless functions for API routes)
+- **Deployment:** Vercel plus a GitHub Pages mirror
 - **Domain:** `hwledger.kooshapari.com` via Cloudflare CNAME
 - **Data sources:** GitHub API (README, releases), PhenoObservability UI, QA JSON reports
 
@@ -66,6 +66,9 @@ bun run dev
 ```bash
 # Build static site
 bun run build
+
+# Build the GitHub Pages mirror
+GITHUB_PAGES=true bun run build
 
 # Preview production build locally
 bun run preview

@@ -1,6 +1,7 @@
 ---
 import "../../styles/globals.css";
 import qaSnapshot from "../../data/qa-snapshot.json";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /qa — quality dashboard.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
@@ -113,7 +114,7 @@ function pctClass(pct: number | undefined): string {
     <main class="max-w-4xl mx-auto px-6 py-12">
       <header class="mb-10">
         <div class="mono text-xs text-[var(--muted)] mb-2">
-          <a href="/" class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
+          <a href={sitePath("/")} class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
           <span class="mx-1">/</span>
           <span>qa</span>
         </div>

@@ -1,5 +1,6 @@
 ---
 import "../../styles/globals.css";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /preview/<pr#> — redirect to Vercel preview deploy.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
@@ -151,7 +152,7 @@ const prUrlOnGitHub = `https://github.com/${REPO}/pull/${prNumber}`;
   <body class="min-h-screen">
     <main class="max-w-3xl mx-auto px-6 py-12">
       <nav class="mono text-xs text-[var(--muted)] mb-6">
-        <a href="/" class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
+        <a href={sitePath("/")} class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
         <span class="mx-1">/</span>
         <span>preview</span>
         <span class="mx-1">/</span>

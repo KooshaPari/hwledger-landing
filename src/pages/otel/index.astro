@@ -1,5 +1,6 @@
 ---
 import "../../styles/globals.css";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /otel — observability iframe.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
@@ -34,7 +35,7 @@ const invalidOtelUrl = rawOtelUrl && !otelUrl ? rawOtelUrl : null;
   <body class="min-h-screen">
     <main class="max-w-7xl mx-auto px-6 py-8">
       <nav class="mono text-xs text-[var(--muted)] mb-4">
-        <a href="/" class="hover:text-[var(--accent)]">hwledger</a>
+        <a href={sitePath("/")} class="hover:text-[var(--accent)]">hwledger</a>
         <span class="mx-1">/</span>
         <span>otel</span>
       </nav>

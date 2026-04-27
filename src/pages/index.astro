@@ -1,6 +1,7 @@
 ---
 import "../styles/globals.css";
 import readmeSnapshot from "../data/readme.html?raw";
+import { sitePath } from "../lib/site";
 
 // Fetch repo metadata + README at build time. Strategy: try live GitHub API
 // (uses GITHUB_TOKEN if set in Vercel env to avoid 60/hr unauthenticated rate
@@ -93,12 +94,12 @@ const releases: any[] = (await gh<any[]>(`repos/${REPO}/releases?per_page=5`)) ?
                style="border-color: var(--border);">
               github →
             </a>
-            <a href="/docs"
+            <a href={sitePath("/docs")}
                class="px-4 py-2 rounded-lg border bg-[var(--card)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
                style="border-color: var(--border);">
               docs →
             </a>
-            <a href="/qa"
+            <a href={sitePath("/qa")}
                class="px-4 py-2 rounded-lg border bg-[var(--card)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition"
                style="border-color: var(--border);">
               qa →
