@@ -18,8 +18,8 @@ import "../../styles/globals.css";
 const REPO_OWNER = "KooshaPari";
 const REPO_NAME = "hwLedger";
 const REPO = `${REPO_OWNER}/${REPO_NAME}`;
-const VERCEL_PROJECT_SLUG = "{{VERCEL_PROJECT_SLUG}}"; // Vercel project name
-const VERCEL_TEAM_SLUG = "{{VERCEL_TEAM_SLUG}}"; // Vercel team slug
+const PROJECT_NAME = "hwLedger";
+const REPO_SLUG = "hwledger";
 
 interface PrInfo {
   number: number;
@@ -35,8 +35,8 @@ export async function getStaticPaths() {
   // NOTE: helpers are inlined here because Astro hoists getStaticPaths and
   // does not give it access to module-scoped declarations.
   const REPO_INNER = `KooshaPari/hwLedger`;
-  const VERCEL_PROJECT = "{{VERCEL_PROJECT_SLUG}}";
-  const VERCEL_TEAM = "{{VERCEL_TEAM_SLUG}}";
+  const VERCEL_PROJECT = "hwledger-landing";
+  const VERCEL_TEAM = "kooshapari";
 
   const ghHeaders = (accept = "application/vnd.github+json") => ({
     Accept: accept,
@@ -144,14 +144,14 @@ const prUrlOnGitHub = `https://github.com/${REPO}/pull/${prNumber}`;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{pr ? `Preview · PR #${pr.number} · hwLedger` : `Preview · PR #${prNumber} · hwLedger`}</title>
-    <meta name="description" content="Stable canonical URL for hwLedger PR preview deploys." />
+    <title>{pr ? `Preview · PR #${pr.number} · ${PROJECT_NAME}` : `Preview · PR #${prNumber} · ${PROJECT_NAME}`}</title>
+    <meta name="description" content={`Stable canonical URL for ${PROJECT_NAME} PR preview deploys.`} />
     {pr && <meta http-equiv="refresh" content={`2; url=${pr.previewUrl}`} />}
   </head>
   <body class="min-h-screen">
     <main class="max-w-3xl mx-auto px-6 py-12">
       <nav class="mono text-xs text-[var(--muted)] mb-6">
-        <a href="/" class="hover:text-[var(--accent)]">hwledger</a>
+        <a href="/" class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
         <span class="mx-1">/</span>
         <span>preview</span>
         <span class="mx-1">/</span>
@@ -217,7 +217,7 @@ const prUrlOnGitHub = `https://github.com/${REPO}/pull/${prNumber}`;
             </p>
             <p class="mt-2">
               <a href={`https://github.com/${REPO}/pulls`} class="preview-link-secondary">
-                See all open hwLedger PRs →
+                See all open {PROJECT_NAME} PRs →
               </a>
             </p>
           </div>
