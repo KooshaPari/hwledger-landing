@@ -17,7 +17,9 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
   --fg: #ededed;
   --muted: #8a8a93;
   --border: #1f1f23;
-  --accent: #f97316;
+  --accent: #7ebab5;
+  --accent-soft: rgba(126, 186, 181, 0.16);
+  --accent-wash: rgba(126, 186, 181, 0.08);
   --card: #111114;
 }
 
@@ -28,6 +30,8 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
     --muted: #6b6b73;
     --border: #e5e5e8;
     --card: #ffffff;
+    --accent-soft: rgba(79, 165, 156, 0.16);
+    --accent-wash: rgba(79, 165, 156, 0.08);
   }
 }
 

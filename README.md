@@ -4,7 +4,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/KooshaPari/hwledger-landing/ci.yml?branch=main)](https://github.com/KooshaPari/hwledger-landing/actions)
 [![TypeScript](https://img.shields.io/badge/typescript-5%2B-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 
-Production landing page at `hwledger.kooshapari.com` for [KooshaPari/hwLedger](https://github.com/KooshaPari/hwLedger), a Rust-based project management and workflow orchestration platform. Part of the Phenotype org-pages architecture (Tier 2; Tier 1 is `projects.kooshapari.com`).
+Production landing page at `hwledger.kooshapari.com` for [KooshaPari/hwLedger](https://github.com/KooshaPari/hwLedger), an LLM capacity planner, fleet ledger, and desktop inference runtime. Part of the Phenotype org-pages architecture (Tier 2; Tier 1 is `projects.kooshapari.com`).
 
 ## Purpose
 
@@ -12,17 +12,17 @@ Provide a cohesive entry point to Hwledger documentation, dashboards, and QA rep
 
 ## Architecture
 
-- **Frontend:** Astro 5 (static HTML at build time, edge rendering)
+- **Frontend:** Astro 6 (static HTML at build time)
 - **Styling:** Tailwind CSS 4 with impeccable design baseline
-- **Deployment:** Vercel (serverless functions for API routes)
+- **Deployment:** Vercel plus a GitHub Pages mirror
 - **Domain:** `hwledger.kooshapari.com` via Cloudflare CNAME
-- **Data sources:** GitHub API (README, releases), OpenTelemetry backend (metrics), local database (QA reports)
+- **Data sources:** GitHub API (README, releases), PhenoObservability UI, QA JSON reports
 
 ## Stack Details
 
 ```toml
 # Runtime
-astro = "5.0"
+astro = "6.0"
 tailwindcss = "4.0"
 
 # Build-time
@@ -58,7 +58,7 @@ export VERCEL_ENV=development
 
 # Start dev server (with HMR + auto-reload)
 bun run dev
-# Server: http://localhost:3000
+# Server: http://localhost:4321
 ```
 
 ### Build for Production
@@ -67,11 +67,14 @@ bun run dev
 # Build static site
 bun run build
 
+# Build the GitHub Pages mirror
+GITHUB_PAGES=true bun run build
+
 # Preview production build locally
 bun run preview
 
 # Deploy to Vercel
-bun run deploy
+vercel --prod
 ```
 
 ## Path Microfrontends
@@ -81,10 +84,10 @@ Per Phenotype org-pages standing policy, `hwledger.kooshapari.com` hosts multipl
 | Path | Component | Status | Purpose |
 |------|-----------|--------|---------|
 | `/` | Landing page | ✅ Active | Hwledger overview, GitHub metadata, CTA |
-| `/docs` | VitePress | 📋 Planned | Mounted docs from Hwledger/docs @ `/docs` |
-| `/otel` | OTEL Dashboard | 📋 Planned | Observability metrics (latency, throughput, errors) |
-| `/qa` | QA Reports | 📋 Planned | Test coverage, Semgrep results, security scans |
-| `/preview/<pr#>` | PR Preview | 📋 Planned | Deploy PR previews to `/preview/123` on merge to staging |
+| `/docs` | Docs browser | Active | Renders hwLedger `docs/` from GitHub |
+| `/otel` | OTel Dashboard | Active fallback | Embeds PhenoObservability when configured |
+| `/qa` | QA Reports | Active fallback | Test coverage, lint, and FR traceability snapshots |
+| `/preview/<pr#>` | PR Preview | Active fallback | Stable PR preview redirects when open PRs exist |
 
 ### Implementing Microfrontends
 
@@ -110,44 +113,33 @@ GITHUB_TOKEN=ghp_xxxx           # Increases rate limit to 5000 req/hr
 VERCEL_ENV=production|staging    # Set by Vercel automatically
 VERCEL_URL=hwledger.kooshapari.com
 
-# OTEL backend (when microfrontend launches)
-OTEL_ENDPOINT=https://otel.internal/api/v1
-OTEL_AUTH_TOKEN=xxx
+# OTel UI embed
+PHENO_OTLP_UI_URL=https://observability.example.com
+PHENO_OBSERVABILITY_UI_URL=https://observability.example.com
 ```
 
 ## Building & Customization
 
 ### Modify Landing Page Content
 
-Edit `src/components/Hero.astro`, `src/components/Features.astro`:
+Edit `src/pages/index.astro`:
 
 ```astro
 ---
-// src/components/Hero.astro
-const githubData = await fetchGitHubRepo('KooshaPari/hwLedger');
+// src/pages/index.astro
+const REPO = "KooshaPari/hwLedger";
 ---
 
 <section class="hero">
-  <h1>{githubData.description}</h1>
-  <p>Latest release: {githubData.latestTag}</p>
+  <h1>hwLedger</h1>
+  <p>{PAGE_DESCRIPTION}</p>
 </section>
 ```
 
 ### Add Custom Styling
 
-Extend Tailwind in `tailwind.config.ts`:
-
-```ts
-export default {
-  theme: {
-    extend: {
-      colors: {
-        'phenotype-purple': '#7c3aed',
-      },
-    },
-  },
-}
-```
+Shared color tokens live in `src/styles/globals.css`. hwLedger uses the
+Phenotype GMK Arch teal accent (`#7ebab5`) for consistency with the project hub.
 
 ### Fetch Live Data at Build Time
 
@@ -167,19 +159,15 @@ const release = await getLatestRelease('KooshaPari/hwLedger');
 ## Testing & Verification
 
 ```bash
-# Lint and format
-bun run lint
-bun run format
-
 # Type check (Astro)
-astro check
+bunx astro check
 
 # Build and verify no errors
 bun run build
 
 # Test in browser
 bun run preview
-# Visit http://localhost:3000 manually
+# Visit http://localhost:4321 manually
 ```
 
 ## Deployment
@@ -210,7 +198,7 @@ vercel --target staging
 
 ```bash
 # In Cloudflare DNS:
-CNAME agileplus → cname.vercel-dns.com
+CNAME hwledger → cname.vercel-dns.com
 
 # Verify
 nslookup hwledger.kooshapari.com

@@ -1,10 +1,14 @@
 ---
 import "../../styles/globals.css";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /docs/* — renders source repo's docs/ tree.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
 
 const REPO = "KooshaPari/hwLedger";
+const PROJECT_NAME = "hwLedger";
+const REPO_SLUG = "hwledger";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const { slug } = Astro.params;
 const path = slug ? `docs/${slug}` : "docs";
 
@@ -21,8 +25,8 @@ async function ghJson(p: string): Promise<any> {
     headers: {
       Accept: "application/vnd.github+json",
       "User-Agent": "hwledger-landing-build",
-      ...(process.env.GITHUB_TOKEN
-        ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+      ...(GITHUB_TOKEN
+        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
         : {}),
     },
   });
@@ -35,8 +39,8 @@ async function ghRaw(p: string): Promise<string | null> {
     headers: {
       Accept: "application/vnd.github.raw",
       "User-Agent": "hwledger-landing-build",
-      ...(process.env.GITHUB_TOKEN
-        ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+      ...(GITHUB_TOKEN
+        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
         : {}),
     },
   });
@@ -49,8 +53,8 @@ async function ghHtml(p: string): Promise<string | null> {
     headers: {
       Accept: "application/vnd.github.html+json",
       "User-Agent": "hwledger-landing-build",
-      ...(process.env.GITHUB_TOKEN
-        ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+      ...(GITHUB_TOKEN
+        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
         : {}),
     },
   });
@@ -61,14 +65,15 @@ async function ghHtml(p: string): Promise<string | null> {
 export async function getStaticPaths() {
   // Recursively walk docs/ via the GitHub Trees API.
   async function walk(): Promise<string[]> {
+    const token = process.env.GITHUB_TOKEN;
     const tree = await fetch(
       `https://api.github.com/repos/KooshaPari/hwLedger/git/trees/main?recursive=1`,
       {
         headers: {
           Accept: "application/vnd.github+json",
           "User-Agent": "hwledger-landing-build",
-          ...(process.env.GITHUB_TOKEN
-            ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+          ...(token
+            ? { Authorization: `Bearer ${token}` }
             : {}),
         },
       },
@@ -110,8 +115,8 @@ if (Array.isArray(listing)) {
     .map((e) => {
       const href =
         e.type === "dir"
-          ? `/docs/${e.path.replace(/^docs\//, "")}`
-          : `/docs/${e.path.replace(/^docs\//, "").replace(/\.mdx?$/, "")}`;
+          ? sitePath(`/docs/${e.path.replace(/^docs\//, "")}`)
+          : sitePath(`/docs/${e.path.replace(/^docs\//, "").replace(/\.mdx?$/, "")}`);
       return `<li><a class="doc-link" href="${href}">${e.name}</a></li>`;
     })
     .join("\n");
@@ -137,7 +142,7 @@ if (Array.isArray(listing)) {
     const raw = await ghRaw(`repos/${REPO}/contents/${path}.md?ref=main`);
     if (raw) {
       // Last-ditch: raw markdown wrapped in <pre>.
-      bodyHtml = `<pre class="raw-md">${raw.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "amp;" })[c] ?? c)}</pre>`;
+      bodyHtml = `<pre class="raw-md">${raw.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c] ?? c)}</pre>`;
     } else {
       degraded = true;
       degradeReason = `No content found at <code>${path}</code> in <code>${REPO}</code>.`;
@@ -150,15 +155,15 @@ if (Array.isArray(listing)) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} · hwLedger docs</title>
+    <title>{title} · {PROJECT_NAME} docs</title>
     <meta name="description" content={`Documentation: ${title}`} />
   </head>
   <body class="min-h-screen">
     <main class="max-w-4xl mx-auto px-6 py-12">
       <nav class="mono text-xs text-[var(--muted)] mb-6">
-        <a href="/" class="hover:text-[var(--accent)]">hwledger</a>
+        <a href={sitePath("/")} class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
         <span class="mx-1">/</span>
-        <a href="/docs" class="hover:text-[var(--accent)]">docs</a>
+        <a href={sitePath("/docs")} class="hover:text-[var(--accent)]">docs</a>
         {slug && (
           <>
             <span class="mx-1">/</span>

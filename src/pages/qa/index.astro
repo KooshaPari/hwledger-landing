@@ -1,6 +1,7 @@
 ---
 import "../../styles/globals.css";
 import qaSnapshot from "../../data/qa-snapshot.json";
+import { sitePath } from "../../lib/site";
 
 // Tier-3 microfrontend: /qa — quality dashboard.
 // Spec: phenotype-infra/docs/governance/path-microfrontends-tier3.md
@@ -13,6 +14,9 @@ import qaSnapshot from "../../data/qa-snapshot.json";
 // Each panel degrades gracefully and loudly when its source is absent.
 
 const REPO = "KooshaPari/hwLedger";
+const PROJECT_NAME = "hwLedger";
+const REPO_SLUG = "hwledger";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 interface CoverageReport {
   pct?: number;
@@ -49,8 +53,8 @@ async function ghReport<T>(file: string, snapshotKey: string): Promise<PanelResu
         headers: {
           Accept: "application/vnd.github.raw",
           "User-Agent": "hwledger-landing-build",
-          ...(process.env.GITHUB_TOKEN
-            ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+          ...(GITHUB_TOKEN
+            ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
             : {}),
         },
       },
@@ -103,14 +107,14 @@ function pctClass(pct: number | undefined): string {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>QA — {REPO}</title>
+    <title>QA - {PROJECT_NAME}</title>
     <meta name="description" content={`Quality dashboard for ${REPO}: coverage, lint, FR traceability.`} />
   </head>
   <body class="min-h-screen">
     <main class="max-w-4xl mx-auto px-6 py-12">
       <header class="mb-10">
         <div class="mono text-xs text-[var(--muted)] mb-2">
-          <a href="/" class="hover:text-[var(--accent)]">← back</a>
+          <a href={sitePath("/")} class="hover:text-[var(--accent)]">{REPO_SLUG}</a>
           <span class="mx-1">/</span>
           <span>qa</span>
         </div>
