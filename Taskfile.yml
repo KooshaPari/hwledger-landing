@@ -21,12 +21,12 @@ tasks:
   test:
     desc: Run Astro and TypeScript validation
     cmds:
-      - bunx astro check
+      - bun run astro check --tsconfig tsconfig.json
 
   lint:
     desc: Run static Astro checks
     cmds:
-      - bunx astro check
+      - bun run astro check --tsconfig tsconfig.json
 
   clean:
     desc: Remove generated build artifacts
