@@ -91,16 +91,17 @@ Per Phenotype org-pages standing policy, `hwledger.kooshapari.com` hosts multipl
 
 ### Implementing Microfrontends
 
-Each microfrontend is isolated and mounted independently:
+Each microfrontend is isolated and mounted independently. The `/docs` route is the
+GitHub-backed docs browser in `src/pages/docs/[...slug].astro`; it walks the
+`docs/` tree from the `KooshaPari/hwLedger` repo and renders markdown from the
+GitHub Contents API.
 
 ```astro
-<!-- src/pages/docs/[...slug].astro — VitePress passthrough -->
+<!-- src/pages/docs/[...slug].astro — GitHub-backed docs browser -->
 ---
-import { getVitePressPage } from '../integrations/vitepresse';
-
-const doc = await getVitePressPage(Astro.params.slug);
+const listing = await ghJson(`repos/${REPO}/contents/${path}?ref=main`);
 ---
-<div set:html={doc.html} />
+<div set:html={bodyHtml} />
 ```
 
 ## Environment Variables
@@ -172,17 +173,13 @@ bun run preview
 
 ## Deployment
 
-### Automated (Push to main)
+### Automated Workflows
 
-```yaml
-# .github/workflows/deploy.yml triggers on:
-# - Push to main
-# - Manual trigger via workflow_dispatch
-
-# 1. Install dependencies
-# 2. Build static site
-# 3. Deploy to Vercel (automatic with linked repo)
-```
+- `.github/workflows/ci.yml` runs on pushes and pull requests to `main`. It
+  installs dependencies, runs `bunx astro check`, and builds the site.
+- `.github/workflows/pages.yml` runs on pushes to `main` and manual
+  `workflow_dispatch`. It builds with `GITHUB_PAGES=true` and publishes the
+  `dist/` artifact to GitHub Pages.
 
 ### Manual Deployment
 
