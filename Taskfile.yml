@@ -15,22 +15,16 @@ tasks:
 
   build:
     desc: Build the Astro site with Bun
-    deps:
-      - install
     cmds:
       - bun run build
 
   test:
     desc: Run Astro and TypeScript validation
-    deps:
-      - install
     cmds:
       - bunx astro check
 
   lint:
     desc: Run static Astro checks
-    deps:
-      - install
     cmds:
       - bunx astro check
 
