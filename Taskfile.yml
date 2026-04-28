@@ -1,90 +1,25 @@
 version: '3'
 
-vars:
-  REPO_STACK:
-    sh: |
-      if [ -f bun.lock ] || [ -f package.json ]; then
-        echo node-bun
-      elif [ -f pnpm-lock.yaml ]; then
-        echo node-pnpm
-      elif [ -f package-lock.json ]; then
-        echo node-npm
-      elif [ -f yarn.lock ]; then
-        echo node-yarn
-      elif [ -f pyproject.toml ] || [ -f requirements.txt ]; then
-        echo python
-      elif [ -f go.mod ]; then
-        echo go
-      elif [ -f Cargo.toml ]; then
-        echo rust
-      else
-        echo unknown
-      fi
-
 tasks:
   default:
-    desc: Show the detected stack and available tasks
+    desc: Build the landing page
     cmds:
-      - task: detect
-
-  detect:
-    desc: Detect the repository language and package manager
-    cmds:
-      - echo "{{.REPO_STACK}}"
+      - task: build
 
   build:
-    desc: Build the project
+    desc: Build the Astro site with Bun
     cmds:
-      - cmd: |
-          case "{{.REPO_STACK}}" in
-            node-bun) bun run build ;;
-            node-pnpm) pnpm run build ;;
-            node-npm) npm run build ;;
-            node-yarn) yarn build ;;
-            python) python -m build ;;
-            go) go build ./... ;;
-            rust) cargo build ;;
-            *)
-              echo "Unsupported repository stack: {{.REPO_STACK}}" >&2
-              exit 1
-              ;;
-          esac
+      - bun run build
 
   test:
-    desc: Run repository verification checks
+    desc: Run Astro and TypeScript checks
     cmds:
-      - cmd: |
-          case "{{.REPO_STACK}}" in
-            node-bun) bunx astro check && bun run build ;;
-            node-pnpm) pnpm exec astro check && pnpm run build ;;
-            node-npm) npx astro check && npm run build ;;
-            node-yarn) yarn astro check && yarn build ;;
-            python) pytest ;;
-            go) go test ./... ;;
-            rust) cargo test ;;
-            *)
-              echo "Unsupported repository stack: {{.REPO_STACK}}" >&2
-              exit 1
-              ;;
-          esac
+      - bunx astro check
 
   lint:
-    desc: Run language-aware linting or static checks
+    desc: Run static checks for the Astro project
     cmds:
-      - cmd: |
-          case "{{.REPO_STACK}}" in
-            node-bun) bunx astro check ;;
-            node-pnpm) pnpm exec astro check ;;
-            node-npm) npx astro check ;;
-            node-yarn) yarn astro check ;;
-            python) ruff check . ;;
-            go) golangci-lint run ;;
-            rust) cargo clippy --all-targets --all-features -- -D warnings ;;
-            *)
-              echo "Unsupported repository stack: {{.REPO_STACK}}" >&2
-              exit 1
-              ;;
-          esac
+      - bunx astro check
 
   clean:
     desc: Remove generated build artifacts
