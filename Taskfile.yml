@@ -6,18 +6,29 @@ tasks:
     cmds:
       - task: build
 
+  install:
+    desc: Install Bun dependencies from the lockfile
+    cmds:
+      - bun install --frozen-lockfile
+
   build:
     desc: Build the Astro site with Bun
+    deps:
+      - install
     cmds:
       - bun run build
 
   test:
     desc: Run Astro and TypeScript checks
+    deps:
+      - install
     cmds:
       - bunx astro check
 
   lint:
     desc: Run static checks for the Astro project
+    deps:
+      - install
     cmds:
       - bunx astro check
 
