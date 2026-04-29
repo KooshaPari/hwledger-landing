@@ -73,7 +73,9 @@ export async function getStaticPaths() {
         const summary: string = run?.output?.summary ?? "";
         const urlMatch = summary.match(/https:\/\/[a-z0-9-]+\.vercel\.app/i);
         if (urlMatch) return { url: urlMatch[0], source: "vercel-check-run" };
-        if (run?.details_url) return { url: run.details_url, source: "vercel-check-run" };
+        if (run?.details_url && /^https:\/\/[a-z0-9-]+\.vercel\.app/i.test(run.details_url)) {
+          return { url: run.details_url, source: "vercel-check-run" };
+        }
       }
     }
     const deployments = await ghJson(`repos/${REPO_INNER}/deployments?sha=${sha}&per_page=20`);
@@ -102,7 +104,7 @@ export async function getStaticPaths() {
     // will fall through to the [prNumber] dynamic 404 path.
     return [
       {
-        params: { prNumber: "none" },
+        params: { prNumber: "0" },
         props: { pr: null, reason: "No open PRs at build time." } as {
           pr: PrInfo | null;
           reason: string | null;

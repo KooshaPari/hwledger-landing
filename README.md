@@ -20,19 +20,11 @@ Provide a cohesive entry point to Hwledger documentation, dashboards, and QA rep
 
 ## Stack Details
 
-```toml
-# Runtime
-astro = "6.0"
-tailwindcss = "4.0"
-
-# Build-time
-octokit = "^21.0"  # GitHub API client
-serde = { version = "1.0", features = ["derive"] }
-tokio = { version = "1.0", features = ["full"] }
-
-# Optional: async operations
-@vercel/og = "^0.6"  # Open Graph image generation
-```
+- Astro 6 static site
+- Bun for package management and scripts
+- Tailwind CSS 4
+- Vercel for previews and deployment orchestration
+- GitHub API for build-time README and QA snapshot fetches
 
 ## Local Development
 
@@ -75,6 +67,12 @@ bun run preview
 
 # Deploy to Vercel
 vercel --prod
+```
+
+### Refresh build-time snapshots
+
+```bash
+bun run data:refresh
 ```
 
 ## Path Microfrontends
