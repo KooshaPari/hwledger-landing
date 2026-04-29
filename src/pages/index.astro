@@ -48,6 +48,11 @@ const meta: any = (await gh(`repos/${REPO}`)) ?? {
   homepage: "",
 };
 const PAGE_DESCRIPTION = meta.description || FALLBACK_DESCRIPTION;
+const DEMO_STEPS = [
+  { label: "Inventory", value: "GPU / VRAM / runtime" },
+  { label: "Fit", value: "model + KV cache budget" },
+  { label: "Ship", value: "capacity plan + runbook" },
+];
 
 const liveReadme = await gh<string>(
   `repos/${REPO}/readme`,
@@ -109,6 +114,16 @@ const releases: any[] = (await gh<any[]>(`repos/${REPO}/releases?per_page=5`)) ?
               ★ {meta.stargazers_count} · {meta.language ?? "Rust"}
             </span>
           </div>
+
+          <ol class="demo-flow mt-8" aria-label="hwLedger demo flow">
+            {DEMO_STEPS.map((step, index) => (
+              <li>
+                <span class="demo-index mono">{String(index + 1).padStart(2, "0")}</span>
+                <strong>{step.label}</strong>
+                <em>{step.value}</em>
+              </li>
+            ))}
+          </ol>
         </div>
 
         <div class="capacity-panel" aria-label="hwLedger capacity planner snapshot">
@@ -178,6 +193,40 @@ const releases: any[] = (await gh<any[]>(`repos/${REPO}/releases?per_page=5`)) ?
       }
       .panel-head strong {
         color: var(--accent);
+      }
+      .demo-flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.7rem;
+        list-style: none;
+        padding: 0;
+      }
+      .demo-flow li {
+        border: 1px solid var(--border);
+        border-radius: 0.55rem;
+        background: color-mix(in oklab, var(--card) 86%, #d7f2ef 14%);
+        padding: 0.8rem;
+        min-width: 0;
+      }
+      .demo-index {
+        display: block;
+        color: var(--accent);
+        font-size: 0.72rem;
+        margin-bottom: 0.45rem;
+      }
+      .demo-flow strong,
+      .demo-flow em {
+        display: block;
+      }
+      .demo-flow strong {
+        font-size: 0.95rem;
+      }
+      .demo-flow em {
+        margin-top: 0.25rem;
+        color: var(--muted);
+        font-style: normal;
+        font-size: 0.78rem;
+        line-height: 1.35;
       }
       .capacity-bars {
         display: grid;
@@ -260,6 +309,9 @@ const releases: any[] = (await gh<any[]>(`repos/${REPO}/releases?per_page=5`)) ?
       .readme-prose img { display: inline-block; }
       @media (max-width: 760px) {
         .hero-shell {
+          grid-template-columns: 1fr;
+        }
+        .demo-flow {
           grid-template-columns: 1fr;
         }
       }
