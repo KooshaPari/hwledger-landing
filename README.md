@@ -1,6 +1,7 @@
 # hwledger-landing
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![AI Slop Inside](https://sladge.net/badge.svg)](https://sladge.net)
 [![CI](https://img.shields.io/github/actions/workflow/status/KooshaPari/hwledger-landing/ci.yml?branch=main)](https://github.com/KooshaPari/hwledger-landing/actions)
 [![TypeScript](https://img.shields.io/badge/typescript-5%2B-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 

@@ -48,11 +48,16 @@ export async function getStaticPaths() {
   });
 
   const ghJson = async (path: string): Promise<any> => {
-    const res = await fetch(`https://api.github.com/${path}`, {
-      headers: ghHeaders(),
-    });
-    if (!res.ok) return null;
-    return res.json();
+    try {
+      const res = await fetch(`https://api.github.com/${path}`, {
+        headers: ghHeaders(),
+      });
+      if (!res.ok) return null;
+      return res.json();
+    } catch (err: any) {
+      console.warn(`[preview] GitHub fetch failed for ${path}: ${err?.message ?? String(err)}`);
+      return null;
+    }
   };
 
   const sanitizeBranch = (b: string) =>

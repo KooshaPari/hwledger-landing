@@ -21,74 +21,94 @@ interface GhContentEntry {
 }
 
 async function ghJson(p: string): Promise<any> {
-  const res = await fetch(`https://api.github.com/${p}`, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "hwledger-landing-build",
-      ...(GITHUB_TOKEN
-        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
-        : {}),
-    },
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`https://api.github.com/${p}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "hwledger-landing-build",
+        ...(GITHUB_TOKEN
+          ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
+          : {}),
+      },
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (err: any) {
+    console.warn(`[docs] GitHub JSON fetch failed for ${p}: ${err?.message ?? String(err)}`);
+    return null;
+  }
 }
 
 async function ghRaw(p: string): Promise<string | null> {
-  const res = await fetch(`https://api.github.com/${p}`, {
-    headers: {
-      Accept: "application/vnd.github.raw",
-      "User-Agent": "hwledger-landing-build",
-      ...(GITHUB_TOKEN
-        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
-        : {}),
-    },
-  });
-  if (!res.ok) return null;
-  return res.text();
+  try {
+    const res = await fetch(`https://api.github.com/${p}`, {
+      headers: {
+        Accept: "application/vnd.github.raw",
+        "User-Agent": "hwledger-landing-build",
+        ...(GITHUB_TOKEN
+          ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
+          : {}),
+      },
+    });
+    if (!res.ok) return null;
+    return res.text();
+  } catch (err: any) {
+    console.warn(`[docs] GitHub raw fetch failed for ${p}: ${err?.message ?? String(err)}`);
+    return null;
+  }
 }
 
 async function ghHtml(p: string): Promise<string | null> {
-  const res = await fetch(`https://api.github.com/${p}`, {
-    headers: {
-      Accept: "application/vnd.github.html+json",
-      "User-Agent": "hwledger-landing-build",
-      ...(GITHUB_TOKEN
-        ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
-        : {}),
-    },
-  });
-  if (!res.ok) return null;
-  return res.text();
+  try {
+    const res = await fetch(`https://api.github.com/${p}`, {
+      headers: {
+        Accept: "application/vnd.github.html+json",
+        "User-Agent": "hwledger-landing-build",
+        ...(GITHUB_TOKEN
+          ? { Authorization: `Bearer ${GITHUB_TOKEN}` }
+          : {}),
+      },
+    });
+    if (!res.ok) return null;
+    return res.text();
+  } catch (err: any) {
+    console.warn(`[docs] GitHub HTML fetch failed for ${p}: ${err?.message ?? String(err)}`);
+    return null;
+  }
 }
 
 export async function getStaticPaths() {
   // Recursively walk docs/ via the GitHub Trees API.
   async function walk(): Promise<string[]> {
     const token = process.env.GITHUB_TOKEN;
-    const tree = await fetch(
-      `https://api.github.com/repos/KooshaPari/hwLedger/git/trees/main?recursive=1`,
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          "User-Agent": "hwledger-landing-build",
-          ...(token
-            ? { Authorization: `Bearer ${token}` }
-            : {}),
+    try {
+      const tree = await fetch(
+        `https://api.github.com/repos/KooshaPari/hwLedger/git/trees/main?recursive=1`,
+        {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "User-Agent": "hwledger-landing-build",
+            ...(token
+              ? { Authorization: `Bearer ${token}` }
+              : {}),
+          },
         },
-      },
-    );
-    if (!tree.ok) return [];
-    const data: any = await tree.json();
-    if (!data.tree) return [];
-    return data.tree
-      .filter(
-        (n: any) =>
-          n.type === "blob" &&
-          n.path.startsWith("docs/") &&
-          (n.path.endsWith(".md") || n.path.endsWith(".mdx")),
-      )
-      .map((n: any) => n.path.replace(/^docs\//, "").replace(/\.mdx?$/, ""));
+      );
+      if (!tree.ok) return [];
+      const data: any = await tree.json();
+      if (!data.tree) return [];
+      return data.tree
+        .filter(
+          (n: any) =>
+            n.type === "blob" &&
+            n.path.startsWith("docs/") &&
+            (n.path.endsWith(".md") || n.path.endsWith(".mdx")),
+        )
+        .map((n: any) => n.path.replace(/^docs\//, "").replace(/\.mdx?$/, ""));
+    } catch (err: any) {
+      console.warn(`[docs] GitHub tree fetch failed: ${err?.message ?? String(err)}`);
+      return [];
+    }
   }
   const paths = await walk();
   // Always emit a root /docs as well.
