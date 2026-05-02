@@ -144,18 +144,8 @@ Phenotype GMK Arch teal accent (`#7ebab5`) for consistency with the project hub.
 
 ### Fetch Live Data at Build Time
 
-```astro
----
-// src/pages/index.astro
-import { getGitHubREADME, getLatestRelease } from '../lib/github';
-
-const readme = await getGitHubREADME('KooshaPari/hwLedger');
-const release = await getLatestRelease('KooshaPari/hwLedger');
----
-
-<article set:html={readme.html} />
-<p>Latest: {release.tag_name}</p>
-```
+The landing page uses server-side data fetching via Astro's `getStaticPaths` and direct API calls.
+Refer to `src/pages/index.astro` for the current implementation of GitHub metadata fetching.
 
 ## Testing & Verification
 
