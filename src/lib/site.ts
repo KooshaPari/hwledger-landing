@@ -2,11 +2,10 @@
  * Site path utilities for hwledger-landing
  */
 
-import { sitePath as _sitePath } from '@kilocode/landing-utils';
 import { SITE_CONFIG } from './constants';
 
-/** Re-export shared types for convenience */
-export type { SitePathFunction } from '@kilocode/landing-utils';
+/** Shared type — mirrors the upstream contract */
+export type SitePathFunction = (path: string) => string;
 
 /**
  * Constructs an absolute site path by prepending the base URL path.
@@ -14,5 +13,6 @@ export type { SitePathFunction } from '@kilocode/landing-utils';
  * @returns The absolute path with base URL prefix
  */
 export function sitePath(path: string): string {
-  return _sitePath(SITE_CONFIG.baseUrl, path);
+  const base = SITE_CONFIG.baseUrl.endsWith('/') ? SITE_CONFIG.baseUrl : SITE_CONFIG.baseUrl + '/';
+  return base + path.replace(/^\//, '');
 }
